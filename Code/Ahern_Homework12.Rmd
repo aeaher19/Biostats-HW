@@ -1,0 +1,68 @@
+---
+title: "Ahern_Homework12.Rmd"
+author: "Aubrey Ahern"
+date: "9/26/2022"
+output: html_document
+---
+
+#Clear R's Brain...
+```{r}
+rm(list = ls())
+```
+
+#Turn on dplyr and here packages (no need to install)
+```{r}
+library(dplyr)
+library(here)
+library(ggplot2)
+```
+
+#Import data using stringsAsFactors
+```{r}
+Cover <-read.csv(here("Data", "donnerville_percent_cover.csv"), stringsAsFactors = TRUE)
+```
+
+```{r}
+glimpse(Cover) #shows you the data
+head(Cover) #first six rows of data
+str(Cover) #displays the structure of dataframe
+tail(Cover) #last six rows of data
+names(Cover) #column headers
+```
+
+#Select the Slope column in order to be examined
+  #Examine Slopes using summary() which returns the min, 1st quartile, median, mean, 3rd quartile, and max
+```{r}
+slopes <- select(Cover, Slope)
+summary(slopes)
+```
+
+#Filter the data by only selecting pieces of data at site 3 and storing them in variable "site3"
+```{r}
+site1 <- filter(Cover, Site == "Donnerville 1")
+site1
+```
+
+#Renaming improper column headings using dplyr rename() function
+```{r}
+Cover <- Cover %>% rename(Plot_type = Plot.type, Plot_dim = Plot.dim)
+names(Cover)
+#other method
+#names(Cover) <- c("Site", "Date", "Plot_type", "Plot_dim", "Slope", "Aspect", "Plot", "Type", "Percent")
+```
+
+#Determine the average percent cover by cover type for Donnerville 1
+  #mean() is in the base package
+```{r}
+Cover %>% filter(Site == "Donnerville 1") %>% group_by(Type) %>% summarise(
+  avg_percent_cover = mean(Percent)
+  )
+```
+
+#Determine the average percent vascular plant cover across all sites
+```{r}
+PerCov <- Cover %>% filter(Type == "Vascular") %>% summarise(
+  avg_percent = mean(Percent)
+)
+```
+

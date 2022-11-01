@@ -1,0 +1,63 @@
+---
+title: "Homework 24.Rmd"
+author: "Aubrey Ahern"
+date: "10/30/2022"
+output: html_document
+---
+
+set things up
+```{r}
+rm(list = ls())
+library(here)
+library(ggplot2)
+library(dplyr)
+```
+
+suck in data / look at it
+```{r}
+lady<-read.csv(here("Data","ladybirds.csv"), stringsAsFactors = TRUE)
+glimpse(lady)
+```
+
+```{r}
+totals<-lady%>%
+  group_by(Habitat,colour)%>%
+  summarise(total.number = sum(number))
+```
+
+```{r}
+ggplot(totals,aes(x=Habitat,y=total.number,fill=colour))+geom_bar(stat='identity',position='dodge')+scale_fill_manual(values=c(black="black",red="red"))
+```
+
+```{r}
+lady.mat<-xtabs(number~Habitat+colour,data=lady)
+lady.mat
+```
+
+```{r}
+lady.chi<-chisq.test(lady.mat)
+names(lady.chi)
+lady.chi$expected
+lady.chi
+```
+
+```{r}
+ozone<-read.csv(here("Data","ozone.csv"), stringsAsFactors = TRUE)
+glimpse(ozone)
+```
+
+```{r}
+ggplot(ozone,aes(x=Ozone))+geom_histogram(binwidth=10)+facet_wrap(~Garden.location,ncol=1)+theme_bw()
+```
+
+```{r}
+t.test(Ozone~Garden.location,data=ozone)
+```
+
+```{r}
+var.test(Ozone~Garden.location,data=ozone)
+```
+
+
+
+

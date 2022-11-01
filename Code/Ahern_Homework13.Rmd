@@ -1,0 +1,47 @@
+---
+title: "Applying More dplyr to my Data"
+author: "Aubrey Ahern"
+date: "9/28/2022"
+output: html_document
+---
+
+#My goals for the assignment is to be more independent in problemshooting errors within R and also to become more comfortable with dplyr functions (and their parameters).
+
+#Clear R's Brain...
+```{r}
+rm(list = ls())
+```
+
+#Turn on dplyr, here, and ggplot2 packages (no need to install)
+```{r}
+library(dplyr)
+library(here)
+library(ggplot2)
+```
+
+#Import data using stringsAsFactors
+#View data using View()
+```{r}
+DF <-read.csv(here("Data", "day_one_data_for_homework13.csv"), stringsAsFactors = TRUE)
+View(DF)
+```
+
+#Importing the .csv file changed the special character in the column heading to "..."
+#Let's rename column headers to be easier to work with in R using the names() function
+```{r}
+names(DF) <- c("Name", "Date", "Part", "Tree_num", "Species", "leaf_length", "leaf_width", "leaf_units")
+```
+
+#Select just the rows of data that are in English units (inches) and that save them to a new data frame called "English"
+```{r}
+English <- filter(DF, leaf_units == "inches")
+```
+
+#Collect all of the data for which the dates have been formatted in the same way and put in a single data frame and called "Uniform_dates"
+```{r}
+Uniform_dates <- filter(DF, Date == "8/24/2022")
+Uniform_dates
+```
+
+
+

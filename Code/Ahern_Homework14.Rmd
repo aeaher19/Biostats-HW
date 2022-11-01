@@ -1,0 +1,45 @@
+---
+title: "Using dplyr to fix mistakes"
+author: "Aubrey Ahern"
+date: "10/2/2022"
+output: html_document
+---
+
+#My goals for the assignment is to be more independent in problemshooting errors within R and also to become more comfortable with dplyr functions (and their parameters).
+
+#Clear R's Brain...
+```{r}
+rm(list = ls())
+```
+
+#Turn on dplyr, here, and ggplot2 packages (no need to install)
+```{r}
+library(dplyr)
+library(here)
+library(ggplot2)
+```
+
+#Import data without using stringsAsFactors
+#summary(DF)
+
+#Import data using stringsAsFactors
+#View data using View()
+```{r}
+DF <-read.csv(here("Data", "drug_resistance.csv"), stringsAsFactors = TRUE)
+summary(DF)
+```
+
+#importing my data using stringsAsFactors makes it so that the strings within the dataset are considered factors whereas the other method leaves them as plain strings
+
+#Thus summary is able to be more accurate and useful to the user when there are explicit factor variables
+
+```{r}
+tech_name = select(DF, tech.name)
+unique(tech_name, incomparables = FALSE, fromLast = FALSE, nmax = NA)
+```
+
+#I see an error when I try to use levels() on factor variables
+
+#Even after looking through GSWR, I am not sure how to repair the number of factor variables but hope to learn in class.
+
+

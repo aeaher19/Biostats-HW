@@ -1,0 +1,20 @@
+---
+title: "Ahern_Homework10.Rmd"
+author: "Aubrey Ahern"
+date: "9/22/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This clear's Rs brain to begin
+```{r}
+rm(list = ls())
+DF <-read.csv(here("Data", "data_types_exercise.csv"), stringsAsFactors = TRUE)
+```
+
+library(readr)
+Ahern_PS1_squirrels <- read_csv("Ahern_PS1_squirrels.csv")
+

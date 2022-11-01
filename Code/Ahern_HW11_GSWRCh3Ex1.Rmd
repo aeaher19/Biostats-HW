@@ -1,0 +1,100 @@
+---
+title: "Ahern_HW11_GSWRCh3Ex1"
+author: "Aubrey Ahern"
+date: "9/25/2022"
+output: html_document
+---
+
+#In this Homework we will be exploring the dplyr package and how it can be used to visualize and extract data.
+
+#Clear R's Brain...
+```{r}
+rm(list = ls())
+```
+
+#Libraries I need (no need to install...)
+```{r}
+library(dplyr)
+library(ggplot2)
+```
+
+#Now suck in some data
+```{r}
+DF <- read.csv(here("Data", "compensation.csv"))
+```
+
+#Quick Summary
+```{r}
+summary(compensation)
+```
+
+#Using dyplr, always takes and gives a data frame
+
+#Columns
+```{r}
+select(compensation, Fruit) #gets the Fruit Column
+select(compensation, -Root) #take Root column out from data
+```
+
+#Rows
+```{r}
+slice(compensation, c(2, 3, 10)) #gets the 2nd, 3rd, and 10th rows
+```
+
+#Gets rows for each condition, and assigns to an object
+```{r}
+lo_hi_fruit <- filter(compensation, Fruit > 80 | Fruit < 20)
+```
+
+#Run this to see what the above line "saved" for later use.
+```{r}
+lo_hi_fruit
+```
+
+#What does compensation look like now?
+```{r}
+head(compensation)
+  #use mutate
+  #log(Fruit) is in the column logFruit all of which gets pub into the object              compensation
+compensation <- mutate(compensation, logFruit = log(Fruit))
+
+  #first 6 rows of the new compensation
+head(compensation)
+```
+
+```{r}
+arrange(compensation, Fruit)
+```
+
+#Root values from Fruit > 80 subset
+```{r}
+select(filter(compensation, Fruit > 80), Root)
+```
+
+#Root values from Fruit > 80 subset via piping
+```{r}
+compensation %>%
+  filter(Fruit > 80) %>%
+    select(Root)
+```
+
+#Use one grouping variable(grazing) and two levels... asking for means
+```{r}
+summarize(
+  group_by(compensation, Grazing), 
+  meanFruit = mean(Fruit))
+```
+
+```{r}
+compensation %>%
+  group_by(Grazing) %>%
+    summarise(meanFruit = mean(Fruit))
+```
+
+```{r}
+compensation %>%
+  group_by(Grazing) %>%
+    summarise(
+      meanFruit = mean(Fruit),
+      sdFruit = sdFruit)
+```
