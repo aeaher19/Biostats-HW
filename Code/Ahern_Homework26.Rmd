@@ -1,0 +1,28 @@
+---
+title: "Homework 26"
+author: "Aubrey Ahern"
+date: "11/2/2022"
+output: html_document
+---
+
+```{r}
+rm(list = ls())
+library(tidyverse)
+library(here)
+library(ggfortify)
+```
+
+pull in the data
+```{r}
+soil <- read.csv(here("Data", "soil_reduced-1.csv"), stringsAsFactors = TRUE)
+```
+
+
+1. Is there a relationship between Soil organic matter (SOM, %) and soil calcium (Ca_ppm)?
+
+2. Does the abundance of worms differ between Donnerville and the Kip Tract?
+
+3. Does the abundance of soil Magnesium (Mg_ppm) differ between Peavine and South Hammond?
+
+4. Does the abundance of zinc (Zn_ppm) differ among forests?
+
