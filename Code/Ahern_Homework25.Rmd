@@ -1,0 +1,19 @@
+---
+title: "Ahern_Homeowork25"
+author: "Aubrey Ahern"
+date: "11/3/2022"
+output: html_document
+---
+set things up
+```{r}
+rm(list = ls())
+library(here)
+library(dplyr)
+library(ggplot2)
+```
+
+suck in data
+```{r}
+
+```
+

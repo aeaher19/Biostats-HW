@@ -41,7 +41,14 @@ summary(soil)
 ```
 
 
-*SCATTER PLOT*
+
+1. Is there a relationship between Soil organic matter (SOM, %) and soil calcium (Ca_ppm)?
+
+```{r}
+ggplot(soil,aes(x=SOM_percent, y=Ca_ppm, color=Forest))+
+  geom_point()+
+  theme_bw()
+```
 #The influence of a single point on the relationship is called "leverage"
 From looking at the data, it appears there may be a weak positive relationship b/w SOM and Ca
 
@@ -61,22 +68,21 @@ Now I need to check model assumptions before interpreting
 autoplot(SOM_CA_mod)
 ```
 
-Assumptions of linear regression (including ANOVA)
-1. Data are normally distributed aka fit the :normal distribution"
-2. Variance if residuals is even
-
 Based on my observations of the auto plot results I am modestly comfortable that my data meet the lms assumptions
 Now look at model outcome
 ```{r}
 anova(SOM_CA_mod)
 ```
 
+```{r}
+summary(SOM_CA_mod)
+```
 
+Only 5% variance in calcium can be explained by SOM
 
-QUESTIONS
-1. Is there a relationship between Soil organic matter (SOM, %) and soil calcium (Ca_ppm)?
 
 2. Does the abundance of worms differ between Donnerville and the Kip Tract?
+
 
 3. Does the abundance of soil Magnesium (Mg_ppm) differ between Peavine and South Hammond?
 
