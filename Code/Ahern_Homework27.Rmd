@@ -1,0 +1,27 @@
+---
+title: "Homework-27"
+author: "Aubrey Ahern"
+date: "11/8/2022"
+output: html_document
+---
+
+set things up
+```{r}
+rm(list = ls())
+library(here)
+library(ggplot2)
+library(dplyr)
+```
+
+look at data (it's in the ggplot2 package... "mpg")
+```{r}
+summary(mpg)
+```
+
+2.2.1 - 5 functions to get more info about mpg
+```{r}
+
+```
+
+
+
