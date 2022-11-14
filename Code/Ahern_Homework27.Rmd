@@ -13,15 +13,247 @@ library(ggplot2)
 library(dplyr)
 ```
 
-look at data (it's in the ggplot2 package... "mpg")
+
+
+2.2.1 
+- 5 functions to get more info about mpg
 ```{r}
 summary(mpg)
+head(mpg)
+dim(mpg)
+str(mpg)
+glimpse(mpg)
 ```
 
-2.2.1 - 5 functions to get more info about mpg
+- How can you find out what other datasets are included with ggplot2?
+look in the ggplot2 function reference
+
+- Apart from the US, most countries use fuel consumption rather than fuel economy? How could you convert cty and hwy into the European standard of 1/100km?
 ```{r}
+mpg <- mpg %>% mutate(cty_km = 235.21/cty, 
+                      hwy_km = 235.21/hwy)
+```
 
+- Which manyfacturer has the most models in this data set?
+Dodge.
+```{r}
+mpg %>%
+  group_by(manufacturer) %>%
+  summarise(totalmods = n()) %>%
+  arrange(desc(totalmods))
+```
+
+- Which model has the most variations?
+Caravan 2wd has the most variations but the answer would change if you remove the redundant specification.
+```{r}
+variations <- mpg %>%
+  group_by(model) %>%
+  summarise(total_vars = n()) %>%
+  arrange(desc(total_vars))
 ```
 
 
+2.3.1
+```{r}
+ggplot(data = mpg, aes(x=displ, y=hwy))+ geom_point()
+```
 
+- How would you describe the relationship between cty and hwy?
+There is a negative and proportional relationship between cty and hwy.
+
+```{r}
+ggplot(mpg, aes(model, manufacturer)) + geom_point()
+#shows models for each manufacturer, not super helpful
+```
+
+- Describe the data, aesthetic mappings and layers used for each of the following plots. You’ll need to guess a little because you haven’t seen all the datasets and functions yet, but use your common sense! See if you can predict what the plot will look like before running the code.
+
+ggplot(mpg, aes(cty, hwy)) + geom_point()
+- data = mpg, aes (x=cty, y=hwy), scatterplot
+
+ggplot(diamonds, aes(carat, price)) + geom_point()
+- data = diamonds, aes (x=carat, y = price), scatterplot
+
+ggplot(economics, aes(date, unemploy)) + geom_line()
+- data = economics, aes (x= date, y = unemploy), line plot
+
+ggplot(mpg, aes(cty)) + geom_histogram()
+- x = cty, histogram
+ 
+ 
+2.4.1
+- What happens when you map them to continuous values?
+```{r}
+ggplot(mpg, aes(x = cty, y = hwy, colour = displ)) +
+  geom_point()
+```
+
+- What about categorical values?
+```{r}
+ggplot(mpg, aes(x = cty, y = hwy, colour = class)) +
+  geom_point()
+```
+
+- What happens when you use more than one aesthetic in a plot?
+```{r}
+ggplot(mpg, aes(x = cty, y = hwy, colour = class, shape = displ)) +
+  geom_point()
+```
+
+- What happens if you map a continuous variable to shape? Why? What happens if you map trans to shape? Why?
+an error happens... shape cannot be continuous
+
+- How is drive train related to fuel economy?
+```{r}
+ggplot(data = mpg, aes(x = drv, y = cty)) +
+  geom_boxplot()
+```
+
+- How is drive train related to engine size and class?
+```{r}
+ggplot(data = mpg, aes(x = drv, y = cyl, colour = class)) +
+  geom_point()
+```
+
+
+2.5.1
+- What happens if you try to facet by a continuous variable like hwy? What about cyl? What’s the key difference?
+```{r}
+ggplot(mpg, aes(displ)) +
+  geom_bar() +
+  facet_wrap(~hwy)
+ggplot(mpg, aes(displ)) +
+  geom_bar() +
+  facet_wrap(~cyl)
+```
+
+- Use faceting to explore the 3-way relationship between fuel economy, engine size, and number of cylinders. How does faceting by number of cylinders change your assessement of the relationship between engine size and fuel economy?
+```{r}
+ggplot(mpg, aes(x = displ, y = cty)) +
+  geom_point() +
+  facet_wrap(~cyl)
+```
+
+- Read the documentation for facet_wrap(). What arguments can you use to control how many rows and columns appear in the output?
+nrow and ncol
+
+- What does the scales argument to facet_wrap() do? When might you use it?
+You can use scales to change the scales for each plot rather than having them be the same.
+
+
+2.6.1
+```{r}
+ggplot(mpg, aes(displ, hwy)) + 
+  geom_point() + 
+  geom_smooth(span = 0.2)
+```
+
+The span argument just changes the wiggliness of the smoother.
+
+```{r}
+ggplot(mpg, aes(displ, hwy)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+
+
+2.6.2
+```{r}
+ggplot(mpg, aes(drv, hwy)) +
+  geom_jitter()
+ggplot(mpg, aes(drv, hwy)) +
+  geom_boxplot()
+ggplot(mpg, aes(drv, hwy)) +
+  geom_violin()
+```
+
+
+2.6.3
+```{r}
+ggplot(mpg, aes(hwy)) + geom_histogram()
+ggplot(mpg, aes(hwy)) + geom_freqpoly()
+```
+
+
+2.6.4
+```{r}
+ggplot(mpg, aes(manufacturer)) + 
+  geom_bar()
+```
+
+```{r}
+drugs <- data.frame(
+  drug = c("a", "b", "c"),
+  effect = c(4.2, 9.7, 6.1)
+)
+ggplot(drugs, aes(drug, effect)) + geom_bar(stat = "identity")
+ggplot(drugs, aes(drug, effect)) + geom_point()
+```
+
+
+2.6.5
+```{r}
+ggplot(economics, aes(date, unemploy / pop)) +
+  geom_line()
+ggplot(economics, aes(date, uempmed)) +
+  geom_line()
+```
+
+
+2.6.6
+- What’s the problem with the plot created by ggplot(mpg, aes(cty, hwy)) + geom_point()? Which of the geoms described above is most effective at remedying the problem?
+```{r}
+ggplot(mpg, aes(cty, hwy)) + geom_point()
+#overplotting, I am not sure how to fix it...
+```
+
+- One challenge with ggplot(mpg, aes(class, hwy)) + geom_boxplot() is that the ordering of class is alphabetical, which is not terribly useful. How could you change the factor levels to be more informative?
+```{r}
+ggplot(mpg, aes(class, hwy)) + geom_boxplot()
+```
+
+- Rather than reordering the factor by hand, you can do it automatically based on the data: ggplot(mpg, aes(reorder(class, hwy), hwy)) + geom_boxplot(). What does reorder() do? Read the documentation.
+```{r}
+ggplot(mpg, aes(reorder(class, hwy), hwy)) + geom_boxplot()
+```
+
+- Explore the distribution of the carat variable in the diamonds dataset. What binwidth reveals the most interesting patterns?
+```{r}
+ggplot(diamonds, aes(x = carat)) +
+  geom_histogram(bins = 10)
+```
+
+- Explore the distribution of the price variable in the diamonds data. How does the distribution vary by cut?
+```{r}
+ggplot(diamonds, aes(x = price)) +
+  geom_freqpoly(bins = 200) +
+  facet_wrap(~cut)
+```
+
+- You now know (at least) three ways to compare the distributions of subgroups: geom_violin(), geom_freqpoly() and the colour aesthetic, or geom_histogram() and faceting. What are the strengths and weaknesses of each approach? What other approaches could you try?\
+It is nice to have a method to compare but it gets a bit crowded.
+
+- Read the documentation for geom_bar(). What does the weight aesthetic do?
+unclear...
+
+- Using the techniques already discussed in this chapter, come up with three ways to visualise a 2d categorical distribution. Try them out by visualising the distribution of model and manufacturer, trans and class, and cyl and trans.
+```{r}
+ggplot(mpg, aes(model)) +
+  geom_bar() +
+  facet_wrap(~manufacturer)
+ggplot(mpg, aes(trans, class)) +
+  geom_jitter()
+ggplot(mpg, aes(cyl)) +
+  geom_bar() +
+  facet_wrap(~trans)
+  
+```
+
+
+2.7
+```{r}
+ggplot(mpg, aes(drv, hwy)) +
+  geom_jitter(width = 0.25) + 
+  xlim("f", "r") + 
+  ylim(20, 30)
+```
