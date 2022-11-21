@@ -1,0 +1,184 @@
+---
+title: "Homework 26"
+author: "Aubrey Ahern"
+date: "11/2/2022"
+output: html_document
+---
+
+```{r}
+rm(list = ls())
+library(tidyverse)
+library(here)
+library(ggfortify)
+```
+
+pull in the data
+```{r}
+soil <- read.csv(here("Data", "soil_reduced-1.csv"), stringsAsFactors = TRUE)
+```
+
+Before we begin any analysis, we need to check out data for possible errors/outliers. Let's begin with that.
+
+A. Forest Names
+```{r}
+levels(soil$Forest)
+```
+
+B. Let's check the soil organic matter and soil calcium
+  Start with a histogram for SOM
+```{r}
+ggplot(soil, aes(x = SOM_percent)) + geom_histogram()
+```
+
+Now check soil calcium
+```{r}
+ggplot(soil, aes(x=Ca_ppm))+ geom_histogram()
+```
+
+Let's also just run a summary on all the variables
+```{r}
+summary(soil)
+```
+
+
+
+
+
+1. Is there a relationship between Soil organic matter (SOM, %) and soil calcium (Ca_ppm)?
+
+```{r}
+ggplot(soil,aes(x=SOM_percent, y=Ca_ppm, color=Forest))+
+  geom_point()+
+  theme_bw()
+```
+#The influence of a single point on the relationship is called "leverage"
+From looking at the data, it appears there may be a weak positive relationship b/w SOM and Ca
+
+Can I guess the slope or y-intercept?
+Slope c. 1000/53 = 18ish, y-int c. 0? right around there.
+
+What statistical model fits these data?
+Both response and predictor are continuous so linear regression seems appropriate
+
+So, let's construct the model
+```{r}
+SOM_CA_mod <- lm(Ca_ppm~SOM_percent, data = soil)
+```
+
+Now I need to check model assumptions before interpreting
+```{r}
+autoplot(SOM_CA_mod)
+```
+
+Based on my observations of the auto plot results I am modestly comfortable that my data meet the lms assumptions
+Now look at model outcome
+```{r}
+anova(SOM_CA_mod)
+```
+
+```{r}
+summary(SOM_CA_mod)
+```
+
+Only 5% variance in calcium can be explained by SOM
+
+
+
+
+2. Does the abundance of worms differ between Donnerville and the Kip Tract?
+
+look at worms
+```{r}
+ggplot(soil,aes(x=Worms))+
+  geom_histogram()
+#outlier on the right
+```
+
+worms are count data, forest is categorical data, therefore i should use a chi squared test
+
+LINE 97 IS A GOOD EXAMPLE OF WHAT I'M LOOKING FOR REGARDING YOUR THOUGHTS OUTSIDE OF CODE CHUNKS. DOESN'T NEED TO BE VOLUMINOUS, BUT SHOWS YOU ARE THINKING ABOUT THE WHY OF WHAT YOU ARE DOING.
+
+look at worms vs. forest
+```{r}
+ggplot(soil,aes(x=Forest,y=Worms))+geom_bar(stat='identity',position='dodge')+scale_fill_manual(values=c(black="black",red="red"))
+```
+
+make a new data frame with only worm counts from donnerville and kip tract
+```{r}
+soil2<-soil%>%
+  filter(Forest=="DONNERVILLE"|Forest=="KIP TRACT")%>%
+  group_by(Forest)%>%
+  summarise(Worms = sum(Worms))
+```
+
+visualize the new data frame
+```{r}
+ggplot(soil2,aes(x=Forest,y=Worms))+geom_bar(stat='identity',position='dodge')+scale_fill_manual(values=c(black="black",red="red"))
+```
+
+```{r}
+soil2.mat<-xtabs(Worms~Forest,data=soil2)
+soil2.mat
+```
+
+```{r}
+soil2.chi<-chisq.test(soil2.mat)
+names(soil2.chi)
+soil2.chi$expected
+soil2.chi
+```
+
+the chi squared test displayed a p-value that was less than 0.5, meaning the data is significant
+the variability of worms has a correlation to forest
+we may reject the null hypothesis
+
+
+
+
+3. Does the abundance of soil Magnesium (Mg_ppm) differ between Peavine and South Hammond?
+
+create a new data frame the only includes Mg_ppm for Peavine and South Hammond
+```{r}
+soil3<-soil%>%
+  filter(Forest=="PEAVINE"|Forest=="SOUTH HAMMOND")%>%
+  group_by(Forest)%>%
+  summarise(Mg_ppm= sum(Mg_ppm))
+```
+
+WHEN YOU DID GROUP BY AND SUMMARIZE YOU LOST ALL THE VARIATION. WHY DID YOU DO THAT STEP?
+
+```{r}
+ggplot(soil3,aes(x=Mg_ppm))+geom_histogram(binwidth=10)+facet_wrap(~Forest,ncol=1)+theme_bw()
+```
+
+```{r}
+t.test(Mg_ppm~Forest,data=soil3)
+```
+i keep getting an error but i am unsure why... it says not enough x observations
+is this because i only see one level recorded for each
+confused if the issue is my new data frame or the test i am trying to run?
+
+IT IS BECAUSE YOU RAN GROUP BY AND SUMMARIZE ON LINES 144 AND 145
+
+
+
+
+
+4. Does the abundance of zinc (Zn_ppm) differ among forests?
+
+let's visualize what i am working with first
+```{r}
+ggplot(soil,aes(x=Forest,y=Zn_ppm))+
+  geom_boxplot()+
+  theme_bw()+
+  coord_flip()
+```
+
+i think that i need to use an anova test here?
+
+i need help being able to determine which test to use, i had to look up which type i would need for almost every question
+...i haven't taken stats since sophomore year of high school, yikes!
+
+THAT'S WHY WE'RE DOING THIS! YOU ARE CHOOSING THE CORRECT TESTS - BUT YOU ARE NOT PREPPING THE DATA PROPERLY FOR THE TESTS. COMPARE THE DATA FRAMES YOU GOT HERE WITH THOSE IN CHAPTER 5 AND YOU'LL SEE HOW THE DATA NEED TO BE STRUCTURED.
+
+
